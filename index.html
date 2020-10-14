@@ -18,8 +18,11 @@ function getUrlVars() {
     return vars;
 }
 
-var dataset = getUrlVars()["dataset"];
-var metrica = getUrlVars()["metrica"];
+var dataset = "original";
+var metrica = "fscore";
+
+dataset = getUrlVars()["dataset"];
+metrica = getUrlVars()["metrica"];
 
 var svg = d3.select("svg"),
     margin = {top: 20, right: 20, bottom: 30, left: 40},
