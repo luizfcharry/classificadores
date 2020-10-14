@@ -10,6 +10,17 @@
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script>
 
+function getUrlVars() {
+    var vars = {};
+    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m, key, value) {
+        vars[key] = value;
+    });
+    return vars;
+}
+
+var dataset = getUrlVars()["dataset"];
+var metrica = getUrlVars()["metrica"];
+
 var svg = d3.select("svg"),
     margin = {top: 20, right: 20, bottom: 30, left: 40},
     width = +svg.attr("width") - margin.left - margin.right,
@@ -31,7 +42,10 @@ var y = d3.scaleLinear()
 var z = d3.scaleOrdinal()
     .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
 
-d3.csv("data.csv", function(d, i, columns) {
+arquivo = dataset+"_"+metrica+".csv";
+console.log(arquivo);
+
+d3.csv(arquivo, function(d, i, columns) {
   for (var i = 1, n = columns.length; i < n; ++i) d[columns[i]] = +d[columns[i]];
   return d;
 }, function(error, data) {
@@ -41,7 +55,7 @@ d3.csv("data.csv", function(d, i, columns) {
 
   x0.domain(data.map(function(d) { return d.Ataque; }));
   x1.domain(keys).rangeRound([0, x0.bandwidth()]);
-  y.domain([0, d3.max(data, function(d) { return d3.max(keys, function(key) { return d[key]; }); })]).nice();
+  y.domain([0, 1]).nice();
   
  g.append("g")
     .selectAll("g")
@@ -71,9 +85,9 @@ d3.csv("data.csv", function(d, i, columns) {
       .attr("y", y(y.ticks().pop()) + 0.5)
       .attr("dy", "0.32em")
       .attr("fill", "#000")
-      .attr("font-weight", "bold")
+      .attr("font-size", 16)
       .attr("text-anchor", "start")
-      .text("F1-Score");
+      .text(dataset+" - "+metrica);
 
   var legend = g.append("g")
       .attr("font-family", "sans-serif")
@@ -132,7 +146,7 @@ d3.csv("data.csv", function(d, i, columns) {
       }
     })
     x1.domain(newKeys).rangeRound([0, x0.bandwidth()]);
-    y.domain([0, d3.max(data, function(d) { return d3.max(keys, function(key) { if (filtered.indexOf(key) == -1) return d[key]; }); })]).nice();
+    y.domain([0, 1]).nice();
     
     // update the y axis:
             svg.select(".y")
@@ -197,4 +211,24 @@ d3.csv("data.csv", function(d, i, columns) {
   
 });
 
+function redireciona() {
+  window.location.href = "/index.html";
+}
+
 </script>
+<form action="#" onsubmit="redireciona();">
+  <label for="dataset">Dataset:</label>
+  <select name="dataset" id="dataset">
+    <option value="original">Original</option>
+    <option value="redistribuido">Redistribuído</option>
+  </select>
+  <br><br>
+  <label for="metrica">Métrica:</label>
+  <select name="metrica" id="metrica">
+    <option value="fscore">F-Score</option>
+    <option value="accuracy">Accuracy</option>
+    <option value="recall">Recall</option>
+  </select>
+  <br><br>
+  <input type="submit" value="Submit">
+</form>
