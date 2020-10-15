@@ -21,8 +21,10 @@ function getUrlVars() {
 var dataset = "original";
 var metrica = "fscore";
 
-dataset = getUrlVars()["dataset"];
-metrica = getUrlVars()["metrica"];
+if (getUrlVars()["dataset"])
+  dataset = getUrlVars()["dataset"];
+if (getUrlVars()["metrica"])
+  metrica = getUrlVars()["metrica"];
 
 var svg = d3.select("svg"),
     margin = {top: 20, right: 20, bottom: 30, left: 40},
@@ -219,7 +221,7 @@ function redireciona() {
 }
 
 </script>
-<form action="#" onsubmit="redireciona();">
+<form action="" onsubmit="redireciona();" >
   <label for="dataset">Dataset:</label>
   <select name="dataset" id="dataset">
     <option value="original">Original</option>
@@ -233,5 +235,10 @@ function redireciona() {
     <option value="recall">Recall</option>
   </select>
   <br><br>
-  <input type="submit" value="Submit">
+  <input type="submit" value="Atualizar">
 </form>
+
+<script>
+  document.getElementById("dataset").value = dataset;
+  document.getElementById("metrica").value = metrica;
+</script>
